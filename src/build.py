@@ -95,7 +95,6 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
     set_N = range(N)
     set_T = range(player_list[0]._x.shape[1])
     set_W = range(player_list[0]._x.shape[0])
-    print(set_W)
 
     
 
@@ -436,7 +435,6 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
     model.sense = plp.LpMaximize
     model.setObjective(objective)
 
-    print(vars_)
 
     model.solve(plp.PULP_CBC_CMD(msg=False))
 
