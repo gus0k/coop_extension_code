@@ -1,71 +1,72 @@
 \* model *\
 Maximize
-OBJ: - batsize - 2 pvsize - 2 zp_0_0 - 2 zp_0_1 - 2 zp_1_0 - 2 zp_1_1
+OBJ: - batsizeXX - 2 pvsizeXX + 0.05 znXX0_0 + 0.05 znXX0_1 + 0.05 znXX1_0
+ + 0.05 znXX1_1 - 2 zpXX0_0 - 2 zpXX0_1 - 2 zpXX1_0 - 2 zpXX1_1
 Subject To
-cons_bat_low_0_0: - sch_0_0 + sdis_0_0 <= 0
-cons_bat_low_0_0_0: - ch_0_0_0 + dis_0_0_0 <= 0
-cons_bat_low_0_0_1: - ch_0_0_0 - ch_0_0_1 + dis_0_0_0 + dis_0_0_1 <= 0
-cons_bat_low_0_1: - sch_0_0 - sch_0_1 + sdis_0_0 + sdis_0_1 <= 0
-cons_bat_low_0_1_0: - ch_0_1_0 + dis_0_1_0 <= 0
-cons_bat_low_0_1_1: - ch_0_1_0 - ch_0_1_1 + dis_0_1_0 + dis_0_1_1 <= 0
-cons_bat_low_1_0: - sch_1_0 + sdis_1_0 <= 0
-cons_bat_low_1_0_0: - ch_1_0_0 + dis_1_0_0 <= 0
-cons_bat_low_1_0_1: - ch_1_0_0 - ch_1_0_1 + dis_1_0_0 + dis_1_0_1 <= 0
-cons_bat_low_1_1: - sch_1_0 - sch_1_1 + sdis_1_0 + sdis_1_1 <= 0
-cons_bat_low_1_1_0: - ch_1_1_0 + dis_1_1_0 <= 0
-cons_bat_low_1_1_1: - ch_1_1_0 - ch_1_1_1 + dis_1_1_0 + dis_1_1_1 <= 0
-cons_bat_up_0_0_0: ch_0_0_0 - dis_0_0_0 <= 0
-cons_bat_up_0_0_1: ch_0_0_0 + ch_0_0_1 - dis_0_0_0 - dis_0_0_1 <= 0
-cons_bat_up_0_1_0: ch_0_1_0 - dis_0_1_0 <= 0
-cons_bat_up_0_1_1: ch_0_1_0 + ch_0_1_1 - dis_0_1_0 - dis_0_1_1 <= 0
-cons_bat_up_1_0_0: ch_1_0_0 - dis_1_0_0 <= 0
-cons_bat_up_1_0_1: ch_1_0_0 + ch_1_0_1 - dis_1_0_0 - dis_1_0_1 <= 0
-cons_bat_up_1_1_0: ch_1_1_0 - dis_1_1_0 <= 0
-cons_bat_up_1_1_1: ch_1_1_0 + ch_1_1_1 - dis_1_1_0 - dis_1_1_1 <= 0
-cons_bnd_low_0_0_0: dis_0_0_0 <= 1
-cons_bnd_low_0_0_1: dis_0_0_1 <= 1
-cons_bnd_low_0_1_0: dis_0_1_0 <= 1
-cons_bnd_low_0_1_1: dis_0_1_1 <= 1
-cons_bnd_low_1_0_0: dis_1_0_0 <= 1
-cons_bnd_low_1_0_1: dis_1_0_1 <= 1
-cons_bnd_low_1_1_0: dis_1_1_0 <= 1
-cons_bnd_low_1_1_1: dis_1_1_1 <= 1
-cons_bnd_up_0_0: - batsize + sch_0_0 <= 0
-cons_bnd_up_0_0_0: ch_0_0_0 <= 1
-cons_bnd_up_0_0_1: ch_0_0_1 <= 1
-cons_bnd_up_0_1: - batsize + sch_0_1 <= 0
-cons_bnd_up_0_1_0: ch_0_1_0 <= 1
-cons_bnd_up_0_1_1: ch_0_1_1 <= 1
-cons_bnd_up_1_0: - batsize + sch_1_0 <= 0
-cons_bnd_up_1_0_0: ch_1_0_0 <= 1
-cons_bnd_up_1_0_1: ch_1_0_1 <= 1
-cons_bnd_up_1_1: - batsize + sch_1_1 <= 0
-cons_bnd_up_1_1_0: ch_1_1_0 <= 1
-cons_bnd_up_1_1_1: ch_1_1_1 <= 1
-cons_shared_bat_up_0_0: - batsize + sch_0_0 - sdis_0_0 <= 0
-cons_shared_bat_up_0_1: - batsize + sch_0_0 + sch_0_1 - sdis_0_0 - sdis_0_1
- <= 0
-cons_shared_bat_up_1_0: - batsize + sch_1_0 - sdis_1_0 <= 0
-cons_shared_bat_up_1_1: - batsize + sch_1_0 + sch_1_1 - sdis_1_0 - sdis_1_1
- <= 0
-cons_shared_bnd_low_0_0: - batsize + sdis_0_0 <= 0
-cons_shared_bnd_low_0_1: - batsize + sdis_0_1 <= 0
-cons_shared_bnd_low_1_0: - batsize + sdis_1_0 <= 0
-cons_shared_bnd_low_1_1: - batsize + sdis_1_1 <= 0
-cons_z_0_0: - ch_0_0_0 - ch_0_1_0 + dis_0_0_0 + dis_0_1_0 + pvsize - sch_0_0
- + sdis_0_0 - zn_0_0 + zp_0_0 <= 0
-cons_z_0_1: - ch_0_0_1 - ch_0_1_1 + dis_0_0_1 + dis_0_1_1 - sch_0_1 + sdis_0_1
- - zn_0_1 + zp_0_1 <= 1
-cons_z_1_0: - ch_1_0_0 - ch_1_1_0 + dis_1_0_0 + dis_1_1_0 + pvsize - sch_1_0
- + sdis_1_0 - zn_1_0 + zp_1_0 <= 0
-cons_z_1_1: - ch_1_0_1 - ch_1_1_1 + dis_1_0_1 + dis_1_1_1 - sch_1_1 + sdis_1_1
- - zn_1_1 + zp_1_1 <= 1
-cons_zo_0_0: ch_0_0_0 + ch_0_1_0 - dis_0_0_0 - dis_0_1_0 - pvsize + sch_0_0
- - sdis_0_0 + zn_0_0 - zp_0_0 <= 0
-cons_zo_0_1: ch_0_0_1 + ch_0_1_1 - dis_0_0_1 - dis_0_1_1 + sch_0_1 - sdis_0_1
- + zn_0_1 - zp_0_1 <= -1
-cons_zo_1_0: ch_1_0_0 + ch_1_1_0 - dis_1_0_0 - dis_1_1_0 - pvsize + sch_1_0
- - sdis_1_0 + zn_1_0 - zp_1_0 <= 0
-cons_zo_1_1: ch_1_0_1 + ch_1_1_1 - dis_1_0_1 - dis_1_1_1 + sch_1_1 - sdis_1_1
- + zn_1_1 - zp_1_1 <= -1
+cons_bat_low_0_0_0: - chXX0_0_0 + disXX0_0_0 <= 0
+cons_bat_low_0_0_1: - chXX0_0_0 - chXX0_0_1 + disXX0_0_0 + disXX0_0_1 <= 0
+cons_bat_low_0_1_0: - chXX0_1_0 + disXX0_1_0 <= 0
+cons_bat_low_0_1_1: - chXX0_1_0 - chXX0_1_1 + disXX0_1_0 + disXX0_1_1 <= 0
+cons_bat_low_1_0_0: - chXX1_0_0 + disXX1_0_0 <= 0
+cons_bat_low_1_0_1: - chXX1_0_0 - chXX1_0_1 + disXX1_0_0 + disXX1_0_1 <= 0
+cons_bat_low_1_1_0: - chXX1_1_0 + disXX1_1_0 <= 0
+cons_bat_low_1_1_1: - chXX1_1_0 - chXX1_1_1 + disXX1_1_0 + disXX1_1_1 <= 0
+cons_bat_up_0_0_0: chXX0_0_0 - disXX0_0_0 <= 0
+cons_bat_up_0_0_1: chXX0_0_0 + chXX0_0_1 - disXX0_0_0 - disXX0_0_1 <= 0
+cons_bat_up_0_1_0: chXX0_1_0 - disXX0_1_0 <= 0
+cons_bat_up_0_1_1: chXX0_1_0 + chXX0_1_1 - disXX0_1_0 - disXX0_1_1 <= 0
+cons_bat_up_1_0_0: chXX1_0_0 - disXX1_0_0 <= 0
+cons_bat_up_1_0_1: chXX1_0_0 + chXX1_0_1 - disXX1_0_0 - disXX1_0_1 <= 0
+cons_bat_up_1_1_0: chXX1_1_0 - disXX1_1_0 <= 0
+cons_bat_up_1_1_1: chXX1_1_0 + chXX1_1_1 - disXX1_1_0 - disXX1_1_1 <= 0
+cons_bnd_low_0_0_0: disXX0_0_0 <= 1
+cons_bnd_low_0_0_1: disXX0_0_1 <= 1
+cons_bnd_low_0_1_0: disXX0_1_0 <= 1
+cons_bnd_low_0_1_1: disXX0_1_1 <= 1
+cons_bnd_low_1_0_0: disXX1_0_0 <= 1
+cons_bnd_low_1_0_1: disXX1_0_1 <= 1
+cons_bnd_low_1_1_0: disXX1_1_0 <= 1
+cons_bnd_low_1_1_1: disXX1_1_1 <= 1
+cons_bnd_up_0_0_0: chXX0_0_0 <= 1
+cons_bnd_up_0_0_1: chXX0_0_1 <= 1
+cons_bnd_up_0_1_0: chXX0_1_0 <= 1
+cons_bnd_up_0_1_1: chXX0_1_1 <= 1
+cons_bnd_up_1_0_0: chXX1_0_0 <= 1
+cons_bnd_up_1_0_1: chXX1_0_1 <= 1
+cons_bnd_up_1_1_0: chXX1_1_0 <= 1
+cons_bnd_up_1_1_1: chXX1_1_1 <= 1
+cons_shared_bat_low_0_0: - schXX0_0 + sdisXX0_0 <= 0
+cons_shared_bat_low_0_1: - schXX0_0 - schXX0_1 + sdisXX0_0 + sdisXX0_1 <= 0
+cons_shared_bat_low_1_0: - schXX1_0 + sdisXX1_0 <= 0
+cons_shared_bat_low_1_1: - schXX1_0 - schXX1_1 + sdisXX1_0 + sdisXX1_1 <= 0
+cons_shared_bat_up_0_0: - batsizeXX + schXX0_0 - sdisXX0_0 <= 0
+cons_shared_bat_up_0_1: - batsizeXX + schXX0_0 + schXX0_1 - sdisXX0_0
+ - sdisXX0_1 <= 0
+cons_shared_bat_up_1_0: - batsizeXX + schXX1_0 - sdisXX1_0 <= 0
+cons_shared_bat_up_1_1: - batsizeXX + schXX1_0 + schXX1_1 - sdisXX1_0
+ - sdisXX1_1 <= 0
+cons_shared_bnd_low_0_0: - batsizeXX + sdisXX0_0 <= 0
+cons_shared_bnd_low_0_1: - batsizeXX + sdisXX0_1 <= 0
+cons_shared_bnd_low_1_0: - batsizeXX + sdisXX1_0 <= 0
+cons_shared_bnd_low_1_1: - batsizeXX + sdisXX1_1 <= 0
+cons_shared_bnd_up_0_0: - batsizeXX + schXX0_0 <= 0
+cons_shared_bnd_up_0_1: - batsizeXX + schXX0_1 <= 0
+cons_shared_bnd_up_1_0: - batsizeXX + schXX1_0 <= 0
+cons_shared_bnd_up_1_1: - batsizeXX + schXX1_1 <= 0
+cons_z_0_0: - chXX0_0_0 - chXX0_1_0 + disXX0_0_0 + disXX0_1_0 + pvsizeXX
+ - schXX0_0 + sdisXX0_0 - znXX0_0 + zpXX0_0 <= 0
+cons_z_0_1: - chXX0_0_1 - chXX0_1_1 + disXX0_0_1 + disXX0_1_1 - schXX0_1
+ + sdisXX0_1 - znXX0_1 + zpXX0_1 <= 1.2
+cons_z_1_0: - chXX1_0_0 - chXX1_1_0 + disXX1_0_0 + disXX1_1_0 + pvsizeXX
+ - schXX1_0 + sdisXX1_0 - znXX1_0 + zpXX1_0 <= 0
+cons_z_1_1: - chXX1_0_1 - chXX1_1_1 + disXX1_0_1 + disXX1_1_1 - schXX1_1
+ + sdisXX1_1 - znXX1_1 + zpXX1_1 <= 1.5
+cons_zo_0_0: chXX0_0_0 + chXX0_1_0 - disXX0_0_0 - disXX0_1_0 - pvsizeXX
+ + schXX0_0 - sdisXX0_0 + znXX0_0 - zpXX0_0 <= 0
+cons_zo_0_1: chXX0_0_1 + chXX0_1_1 - disXX0_0_1 - disXX0_1_1 + schXX0_1
+ - sdisXX0_1 + znXX0_1 - zpXX0_1 <= -1.2
+cons_zo_1_0: chXX1_0_0 + chXX1_1_0 - disXX1_0_0 - disXX1_1_0 - pvsizeXX
+ + schXX1_0 - sdisXX1_0 + znXX1_0 - zpXX1_0 <= 0
+cons_zo_1_1: chXX1_0_1 + chXX1_1_1 - disXX1_0_1 - disXX1_1_1 + schXX1_1
+ - sdisXX1_1 + znXX1_1 - zpXX1_1 <= -1.5
 End

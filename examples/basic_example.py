@@ -8,6 +8,7 @@ from src.game import *
 from pathlib import Path
 from sim.params_alg import params
 from src.player import Player
+from copy import deepcopy
 
 T = 2
 N = 2
@@ -29,7 +30,7 @@ pvinfo = {
 
 probabilities = np.array([0.5, 0.5])
 
-p1 = Player(x=np.array([[0, 1], [0, 0]]),
+p1 = Player(x=np.array([[0, 0.2], [0, 1]]),
             sm = 0,
             s0 = 0,
             ram = 1,
@@ -37,7 +38,7 @@ p1 = Player(x=np.array([[0, 1], [0, 0]]),
             ed = 1)
 player_list.append(p1)
 
-p2 = Player(x=np.array([[0, 0], [0, 1]]),
+p2 = Player(x=np.array([[0, 1], [0, 0.5]]),
             sm = 0,
             s0 = 0,
             ram = 1,
@@ -47,7 +48,7 @@ player_list.append(p2)
 
 
 buying_price = np.array([4, 4]) 
-selling_price = np.ones(T) * 0
+selling_price = np.ones(T) * 0.1
 
 G = nx.complete_graph(N)
 
@@ -67,10 +68,6 @@ duals = np.zeros(L)
 
 pairs = []
 
-def extract_contrib(cons):
-
-    return (2, 3)
-
 for l, row in enumerate(mostr):
     if row[:4] == 'cons':
         con_name = row.split(':')[0]
@@ -83,30 +80,91 @@ for l, row in enumerate(mostr):
 
 payoff = np.zeros(N)
 for cn, du, ctr in pairs:
-    print(cn, '---', du, '---', ctr, '---', du * ctr)
+   # print(cn, '---', du, '---', ctr, '---', du * ctr)
     payoff += du * ctr
 
 print(payoff)
 
+def solve_iterated_game(N, players_info, loads, forcast, pb, ps, batinfo, pvinfo, bat, pv):
+
+    bats = np.zeros(N + 1)
+    T = loads.shape[1]
+    costs = np.zeros(T)
+    games = []
+
+    for t in range(T):
+
+        players = []
+        for n in range(N):
+            li = forcast[n, t:].copy()
+            li[0] = loads[n, t]
+            li = li.reshape(1, -1)
+            pl = Player(x   = li, 
+                        sm  = players_info[n]._sm,
+                        s0  = bats[n],
+                        ram = players_info[n]._ram,
+                        ec  = players_info[n]._ec,
+                        ed  = players_info[n]._ed)
+            players.append(pl)
+
+        batinfo['init'] = bats[N]
+
+        pli = forcast[N, t:].copy()
+        pli[0] = loads[N, t]
+        pli = pli.reshape(1, -1)
+        
+        PV = {'cost': pvinfo['cost'], 'data': pli} 
+
+        for pl in players:
+            print(pl._x)
+        res = solve_centralized(players, pb[t:], ps[t:], batinfo, PV, np.array([1]), bat, pv)
+        games.append(res)
+
+        if res[0].status != 1:
+            print('Solution not optimal')
+
+        var_ = res[1]
+        for v in var_.values():
+            print(v.name, v.varValue)
+        for n in range(N):
+            ch = var_["chXX0_{0}_0".format(n)].varValue
+            dis = var_["disXX0_{0}_0".format(n)].varValue
+            bats[n] += ch - dis
+
+        ch = var_["schXX0_0".format(n)].varValue
+        dis = var_["sdisXX0_0".format(n)].varValue
+        bats[N] += ch - dis
+
+        zp = var_["zpXX0_0"].varValue
+        zn = var_["znXX0_0"].varValue
+        costs[t] = zp * pb[t] - zn * ps[t]
+        print(bats)
+
+    return costs, games
+
+
+loads = np.array([
+    [0, .2],
+    [0, 1],
+    [-1, 0], # Load PV
+    ])
+
+
+forecast = np.array([
+    [0, .2],
+    [0, 0.8],
+    [-1, 0], # Load PV
+    ])
+
+res2 =  solve_iterated_game(2, player_list, loads, forecast, buying_price, selling_price, batinfo, pvinfo, 1.2, 1.2)
+
+
+#game = Game(player_list, buying_price, selling_price, G, batinfo, pvinfo, probabilities)
+
+
+
+
+
 
 
     
-    # payoff = np.zeros(N)
-    # for n, pl in enumerate(PL):
-    #     pay = 0
-
-    #     for t in range(T):
-    #         du = cons[f"cons_bnd_up_{n}_{t}"].pi
-
-# start = time.time()
-# g = generate_random_uniform(N, T, G, seed)
-# g.init()
-# x, gr, tim, niter = main_dist(g)
-# end = time.time()
-# costs = np.sum(x.mean(axis=0) * gr, axis=1)
-# pc = g.get_payoff_core()
-# if VF is True:
-#     _ = g.get_core_naive()
-# data = [g, x, gr, end - start, tim.sum(), costs, pc, niter]
-# with open(path_file, 'wb') as fh:
-#     pickle.dump(data, fh)

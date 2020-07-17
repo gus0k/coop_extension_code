@@ -85,7 +85,7 @@ from collections import namedtuple
 
 
 
-def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo, prob):
+def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo, prob, batfix=None, pvfix=None):
 
     model = plp.LpProblem(name="model")
 
@@ -95,6 +95,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
     set_N = range(N)
     set_T = range(player_list[0]._x.shape[1])
     set_W = range(player_list[0]._x.shape[0])
+    print(set_W)
 
     
 
@@ -104,7 +105,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
             cat=plp.LpContinuous,
             lowBound=0,
             upBound=None,
-            name="zp_{0}_{1}".format(w, t)
+            name="zpXX{0}_{1}".format(w, t)
         ) for t in set_T for w in set_W
     }
 
@@ -114,7 +115,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
             cat=plp.LpContinuous,
             lowBound=0,
             upBound=None,
-            name="zn_{0}_{1}".format(w, t)
+            name="znXX{0}_{1}".format(w, t)
         ) for t in set_T for w in set_W
     }
 
@@ -124,7 +125,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
         plp.LpVariable(
             cat=plp.LpContinuous,
             lowBound=0,
-            name="ch_{0}_{1}_{2}".format(w, n, t)
+            name="chXX{0}_{1}_{2}".format(w, n, t)
         ) for t in set_T for n in set_N for w in set_W
     }
 
@@ -132,7 +133,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
         plp.LpVariable(
             cat=plp.LpContinuous,
             lowBound=0,
-            name="sch_{0}_{1}".format(w, t)
+            name="schXX{0}_{1}".format(w, t)
         ) for t in set_T for w in set_W
     }
     ## d^n_t
@@ -141,7 +142,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
         plp.LpVariable(
             cat=plp.LpContinuous,
             lowBound=0,
-            name="dis_{0}_{1}_{2}".format(w, n, t)
+            name="disXX{0}_{1}_{2}".format(w, n, t)
         ) for t in set_T for n in set_N for w in set_W
     }
 
@@ -149,18 +150,25 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
         plp.LpVariable(
             cat=plp.LpContinuous,
             lowBound=0,
-            name="sdis_{0}_{1}".format(w, t)
+            name="sdisXX{0}_{1}".format(w, t)
         ) for t in set_T for w in set_W
     }
 
-    batsize = plp.LpVariable(cat=plp.LpContinuous, lowBound=0, name="batsize")
-    pvsize = plp.LpVariable(cat=plp.LpContinuous, lowBound=0, name="pvsize")
+    batsize = plp.LpVariable(cat=plp.LpContinuous, lowBound=0, name="batsizeXX")
+    pvsize = plp.LpVariable(cat=plp.LpContinuous, lowBound=0, name="pvsizeXX")
 
 
     var = [zp_vars, zn_vars, ch_vars, 
             dis_vars, shared_ch_vars, shared_dis_vars,
             batsize, pvsize]
 
+    vars_ = {}
+    for vi in var:
+        if isinstance(vi, dict):
+            for v in vi.values():
+                vars_[v.name] = v
+        else:
+            vars_[vi.name] = vi
 
     #### Constraints
 
@@ -275,7 +283,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
                  1)),
                  sense=plp.LpConstraintLE,
                  rhs=batinfo['init'],
-                 name="cons_bat_low_{0}_{1}".format(w, j))
+                 name="cons_shared_bat_low_{0}_{1}".format(w, j))
            for j in set_T for w in set_W}
 
     for k in cons_shared_bat_lb: model.addConstraint(cons_shared_bat_lb[k])
@@ -294,7 +302,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
                      e=shared_ch_vars[(w, t)]- batinfo['ram'] * batsize,
                      sense=plp.LpConstraintLE,
                      rhs=0,
-                     name="cons_bnd_up_{0}_{1}".format(w, t))
+                     name="cons_shared_bnd_up_{0}_{1}".format(w, t))
                for t in set_T for w in set_W}
 
     for k in cons_shared_bnd_ub: model.addConstraint(cons_shared_bnd_ub[k])
@@ -324,6 +332,39 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
 
     ####### End public batteries
 
+    ####### Begin fix pv and battery
+
+    ## Fixing battery 
+    if batfix is not None:
+        cons_fix_bat = plp.LpConstraint(
+                     e=batsize,
+                     sense=plp.LpConstraintEQ,
+                     rhs=batfix,
+                     name="batfix")
+
+        for k in cons_fix_bat: model.addConstraint(cons_fix_bat)
+
+        ### Contributions
+        cont = np.zeros(N)
+        contributions[cons_fix_bat.name] = cont
+
+    ## Fixing PV
+    if pvfix is not None:
+        cons_fix_pv = plp.LpConstraint(
+                     e=pvsize,
+                     sense=plp.LpConstraintEQ,
+                     rhs=pvfix,
+                     name="pvfix")
+
+        for k in cons_fix_pv: model.addConstraint(cons_fix_pv)
+
+        ### Contributions
+        cont = np.zeros(N)
+        contributions[cons_fix_pv.name] = cont
+
+
+    #######
+
     ####### Net energy equations 
 
     ### On side of the equality
@@ -332,7 +373,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
     SED = batinfo['ed']
 
 
-    cons_z = {(w, t): 
+    cons_z = {(w, t):  
         plp.LpConstraint(
                      e=plp.lpSum(
                         zp_vars[(w,t)] - zn_vars[(w, t)]  
@@ -395,7 +436,9 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
     model.sense = plp.LpMaximize
     model.setObjective(objective)
 
-    model.solve()
+    print(vars_)
+
+    model.solve(plp.PULP_CBC_CMD(msg=False))
 
     opt_val = objective.value()
 
@@ -411,7 +454,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
     # df.columns = ['t', 'zp', 'zn']
     # df_z = df.copy()
 
-    return model, var, cons, contributions
+    return model, vars_, cons, contributions
 
 
 def extract_core_payment(game):

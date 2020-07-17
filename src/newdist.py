@@ -78,7 +78,7 @@ def main_dist(g):
     NE = [list(g.G.neighbors(n)) for n in range(N)]
 
     for i in range(1, ITERS):
-        start_iter = time.clock()
+        start_iter = time.perf_counter()
         new_xs = []
 
         for n in range(N):
@@ -111,7 +111,7 @@ def main_dist(g):
             print('Exit, ', i)
             break
         xs = xs_
-        end_iter = time.clock()
+        end_iter = time.perf_counter()
         itertimes[i] = end_iter - start_iter
             
     return xs, grads, itertimes, i
