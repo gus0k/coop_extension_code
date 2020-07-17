@@ -104,7 +104,8 @@ assert real_solar.shape == (D, T)
 assert forecast_solar.shape == (D, T)
 
 results = dict()
-for S in [[0], [1], [0, 1]]:
+#for S in [[0], [1], [0, 1]]:
+for S in [[0]]:
 
     players = []
     for n in S:
@@ -240,6 +241,7 @@ for S in [[0], [1], [0, 1]]:
         cost_perfect_data_investment[d] = cost_perfect_data
 
         core_perfect_data = extract_core(len(S), perfect_data)
+        # TODO: this does not work
         cores_perfect_data[d, :] = core_perfect_data
 
 
@@ -257,3 +259,5 @@ for S in [[0], [1], [0, 1]]:
     }
 
     results[tuple(S)] = result
+
+results
