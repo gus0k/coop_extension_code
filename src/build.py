@@ -85,7 +85,7 @@ from collections import namedtuple
 
 
 
-def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo, prob, batfix=None, pvfix=None):
+def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo, prob, batfix=None, pvfix=None, proportions_core=None):
 
     model = plp.LpProblem(name="model")
 
@@ -344,7 +344,10 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
         for k in cons_fix_bat: model.addConstraint(cons_fix_bat)
 
         ### Contributions
-        cont = np.zeros(N)
+        if proportions_core is not None:
+            cont = proportions_core / proportions_core.sum() * batfix
+        else:
+            cont = np.ones(N) / N * batfix
         contributions[cons_fix_bat.name] = cont
 
     ## Fixing PV
@@ -358,7 +361,10 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
         for k in cons_fix_pv: model.addConstraint(cons_fix_pv)
 
         ### Contributions
-        cont = np.zeros(N)
+        if proportions_core is not None:
+            cont = proportions_core / proportions_core.sum() * pvfix
+        else:
+            cont = np.ones(N) / N * pvfix
         contributions[cons_fix_pv.name] = cont
 
 
