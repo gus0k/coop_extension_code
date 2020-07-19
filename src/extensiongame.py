@@ -36,6 +36,7 @@ def solve_iterated_game(N, players_info, loads, forcast, pb, ps, batinfo, pvinfo
 
         players = []
         for n in range(N):
+            print(players_info[n]._ec)
             li = forcast[n, t:].copy()
             li[0] = loads[n, t]
             li = li.reshape(1, -1)
@@ -110,7 +111,7 @@ def solve_one_game(N, T, D, W,
     assert forecast_solar.shape == (D, T)
 
     results = dict()
-    for S in [[0], [1], [0, 1]]:
+    for S in [[i] for i in range(N)] + [NN]:
     #for S in [[0, 1]]:
 
         players = []
@@ -327,3 +328,35 @@ def solve_one_game(N, T, D, W,
 
     return results
 
+def paramteres_skeleton(N, T, W, D):
+
+    one_player = {'sm': 0, 's0': 0, 'ram': 0, 'ec': 1, 'ed': 1}
+
+    player_info = [deepcopy(one_player) for n in range(N)]
+
+    battery_info = {
+        'size': 0,
+        'init': 0,
+        'ram': 0,
+        'ec': 1,
+        'ed': 1,
+        'cost': 0}
+
+
+    scenarios_training_load = [np.zeros((W, T)) for n in range(N)]
+    scenarios_training_solar = np.zeros((W, T))
+
+    probabilities = np.ones(W) / W
+
+
+    real_load = [np.zeros((D, T)) for n in range(N)]
+    real_forecast = [np.zeros((D, T)) for n in range(N)]
+
+    real_solar = np.zeros((D, T))
+    forecast_solar = np.zeros((D, T))
+
+    res = (player_info, battery_info, scenarios_training_load,
+        scenarios_training_solar, probabilities, real_load, real_forecast,
+        real_solar, forecast_solar)
+
+    return res
