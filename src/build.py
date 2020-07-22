@@ -7,85 +7,7 @@ from src.player import Player
 from collections import namedtuple
 
 
-# def solve_centralized(player_list, bp, sp, batinfo, solarinfo):
-
-#     mo = plp.LpProblem(name="model")
-#     contributions = {}
-#     set_N = range(len(player_list))
-#     set_T = range(len(player_list[0]._x.shape[1]))
-#     set_W = range(len(player_list[0]._x.shape[0]))
-
-#     var = {
-#         'zp': 'T',
-#         'zn': 'T',
-#         'ch': 'WNT',
-#         'dis': 'WNT',
-#         'sch': 'WT',
-#         'sdh': 'WT',
-#         'sbs': '1',
-#         'sss': '1',
-#     }
-
-#     for k, v in var.items():
-
-#         if v == 'T': # Time-slots
-#             tmp = {t:
-#                 plp.LpVariable(
-#                     cat=plp.LpContinuous,
-#                     lowBound=0,
-#                     upBound=None,
-#                     name="{0}_{1}".format(k, t))
-#             for t in set_T}
-
-#         elif v == 'WNT': # Scenario Players Time-slots
-
-#             tmp = {(w, n, t):
-#                 plp.LpVariable(
-#                     cat=plp.LpContinuous,
-#                     lowBound=0,
-#                     upBound=None,
-#                     name="{0}_{1}_{2}_{3}".format(k, w, n, t))
-#             for t in set_T for n in set_N for w in set_W}
-
-#         elif v == 'WT': # Scenarios, Time-slots
-            
-#             tmp = {(w, t):
-#                 plp.LpVariable(
-#                     cat=plp.LpContinuous,
-#                     lowBound=0,
-#                     upBound=None,
-#                     name="{0}_{1}_{2}".format(k, w, t))
-#             for t in set_T for w in set_W}
-
-#         else:
-#             tmp = plp.LpVariable(
-#                     cat=plp.LpContinuous,
-#                     lowBound=0,
-#                     upBound=None,
-#                     name=k)
-
-#         var[k] = tmp
-
-#     cons_bat_ub = {(n, j) :
-#     plp.LpConstraint(
-#                  e=plp.lpSum(ch_vars[(n, t)] - dis_vars[(n, t)] for t in range(j +
-#                  1)),
-#                  sense=plp.LpConstraintLE,
-#                  rhs=player_list[n]._sm - player_list[n]._s0,
-#                  name="cons_bat_up_{0}_{1}".format(n, j))
-#            for j in set_T for n in set_N}
-
-#     N = len(set_N)
-#     for n in set_N:
-#         for j in set_T:
-#             cont = np.zeros(N)
-#             cont[n] = player_list[n]._sm - player_list[n]._s0
-#             contributions[cons_bat_ub[(n, j)].name] = cont
-
-
-
-
-def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo, prob, batfix=None, pvfix=None, proportions_core=None):
+def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo, prob, batfix=None, pvfix=None, proportions_core=None, integer=False):
 
     model = plp.LpProblem(name="model")
 
@@ -153,8 +75,12 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
         ) for t in set_T for w in set_W
     }
 
-    batsize = plp.LpVariable(cat=plp.LpContinuous, lowBound=0, name="batsizeXX")
-    pvsize = plp.LpVariable(cat=plp.LpContinuous, lowBound=0, name="pvsizeXX")
+    if integer is False:
+        batsize = plp.LpVariable(cat=plp.LpContinuous, lowBound=0, name="batsizeXX")
+        pvsize = plp.LpVariable(cat=plp.LpContinuous, lowBound=0, name="pvsizeXX")
+    else:
+        batsize = plp.LpVariable(cat='Integer', lowBound=0, name="batsizeXX")
+        pvsize = plp.LpVariable(cat='Integer', lowBound=0, name="pvsizeXX")
 
 
     var = [zp_vars, zn_vars, ch_vars, 

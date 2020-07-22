@@ -25,7 +25,7 @@ def extract_core(N, result):
     return payoff
 
 
-def solve_iterated_game(N, players_info, loads, forcast, pb, ps, batinfo, pvinfo, bat, pv):
+def solve_iterated_game(N, players_info, loads, forcast, pb, ps, batinfo, pvinfo, bat, pv, integer=False):
 
     bats = np.zeros(N + 1)
     T = loads.shape[1]
@@ -56,7 +56,7 @@ def solve_iterated_game(N, players_info, loads, forcast, pb, ps, batinfo, pvinfo
         
         PV = {'cost': pvinfo['cost'], 'data': pli} 
 
-        res = solve_centralized(players, pb[t:], ps[t:], batinfo, PV, np.array([1]), bat, pv)
+        res = solve_centralized(players, pb[t:], ps[t:], batinfo, PV, np.array([1]), bat, pv, integer=integer)
         games.append(res)
 
         if res[0].status != 1:
@@ -92,6 +92,7 @@ def solve_one_game(N, T, D, W,
         battery_info,
         cost_solar,
         probabilities,
+        integer,
         ):
 
     NN = tuple(range(N))
@@ -141,6 +142,7 @@ def solve_one_game(N, T, D, W,
                 probabilities,
                 0,
                 0,
+                integer=integer,
         )
 
         cost_no_investment = - no_investment[0].objective.value()
@@ -156,6 +158,7 @@ def solve_one_game(N, T, D, W,
                 probabilities,
                 None,
                 None,
+                integer=integer,
         )
 
         cost_investment = - investment[0].objective.value()
@@ -191,6 +194,7 @@ def solve_one_game(N, T, D, W,
                     pv_info,
                     optimal_battery,
                     optimal_pv,
+                    integer=integer,
                     )
 
             cost_iterated =  iter_investment[0].sum() + optimal_pv * cost_solar
@@ -208,6 +212,7 @@ def solve_one_game(N, T, D, W,
                     pv_info,
                     0,
                     0,
+                    integer=integer,
                     )
 
             cost_iterated_no =  iter_no_investment[0].sum() 
@@ -244,6 +249,7 @@ def solve_one_game(N, T, D, W,
                     optimal_battery,
                     optimal_pv,
                     core_investment,
+                    integer=integer,
             )
 
             cost_perfect_data = - perfect_data[0].objective.value()

@@ -2,6 +2,7 @@
 import sys
 import time
 import os
+import json
 import pickle
 import numpy as np
 from src.newdist import main_dist
@@ -16,16 +17,26 @@ from src.process_data import get_data
 from config import *
 import pandas as pd
 
+class NumpyEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return json.JSONEncoder.default(self, obj)
+
 ###### Extra parameters
 
-N = 10
-W = 15
+N = 20
+W = 30
 T = 48
-D = 5
+D = 10
 cant_bats = 5
-real_data = 10
+real_data = 30
 seed = 1234
 cost_solar = 50
+
+parameters = [N, W, T, D, cant_bats, real_data, seed, cost_solar]
+
+string = '-'.join(map(str, parameters))
 
 buying_price = np.ones(T) * 20.0
 buying_price[: T // 2] = 15.0
@@ -117,6 +128,15 @@ results = solve_one_game(N, T, D, W,
         player_info,
         battery_info,
         cost_solar,
-        probabilities
+        probabilities,
+        integer=True,
         )
+
+res_str = dict((str(k), v) for k, v in results.items())
+
+with open(string + '.json', 'w') as fh:
+    fh.write(
+        json.dumps(res_str, indent=4, cls=NumpyEncoder)
+    )
+
 
