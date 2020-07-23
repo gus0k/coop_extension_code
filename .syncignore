@@ -2,3 +2,5 @@ venv
 .git
 .gitignore
 */__pycache__/
+sync.sh
+.syncignore

@@ -2,13 +2,13 @@ import os
 from os.path import expanduser
 
 home = expanduser("~")
-SIMULATION_PARAMETERS = home + '/Simulations/journallem'
+SIMULATION_PARAMETERS = home + '/Simulations/coop_extension'
 
 if not os.path.isdir(SIMULATION_PARAMETERS):
     os.makedirs(SIMULATION_PARAMETERS)
 
 
-DATAPATH = home + '/github/coop_extension_code/load_profiles/'
+DATAPATH = home + '/coop_extension_code/coop_extension_code/load_profiles/'
 
 DATA = DATAPATH + 'home_data_2012-13.csv'
 DATA_SOLAR = DATAPATH + 'home_data_2012-13_rand_03.csv'

@@ -36,7 +36,6 @@ def solve_iterated_game(N, players_info, loads, forcast, pb, ps, batinfo, pvinfo
 
         players = []
         for n in range(N):
-            print(players_info[n]._ec)
             li = forcast[n, t:].copy()
             li[0] = loads[n, t]
             li = li.reshape(1, -1)

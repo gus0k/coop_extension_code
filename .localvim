@@ -1,0 +1,3 @@
+augroup testgroup
+    autocmd BufWrite * :!./sync.sh
+augroup END
