@@ -101,6 +101,7 @@ results = solve_one_game(N, T, D, W,
         player_info,
         battery_info,
         cost_solar,
-        probabilities
+        probabilities,
+        integer=False,
         )
-
+print(results)

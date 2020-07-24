@@ -53,9 +53,7 @@ if __name__ == '__main__':
 
     ram_bat, ec_bat, ed_bat, max_solar = map(float, [ram_bat, ec_bat, ed_bat, max_solar])
 
-    print(max_solar, cant_solar)
 
-    print(file_)
     if file_.exists():
         print('Exists')
         quit()
@@ -127,12 +125,10 @@ if __name__ == '__main__':
 
     ## Training
     gen = r.uniform(max_solar, 0, size=(W, 24))
-    print(gen)
     solar_train = np.hstack([
         np.zeros((W, 12)), gen, np.zeros((W, 12))])
     scenarios_training_solar[:, :] = solar_train
 
-    print(scenarios_training_solar)
 
     ## Validation
 

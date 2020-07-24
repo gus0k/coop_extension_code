@@ -5,11 +5,16 @@ from copy import deepcopy
 from src.player import Player
 
 from collections import namedtuple
+from config import *
 
 
 def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo, prob, batfix=None, pvfix=None, proportions_core=None, integer=False):
 
     model = plp.LpProblem(name="model")
+    if CPLEX_PATH is not None:
+        solver = plp.CPLEX_CMD(path=CPLEX_PATH, msg=False)
+    else:
+        solver = plp.PULP_CBC_CMD(msg=False)
 
     contributions = {}
 
@@ -368,7 +373,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
     model.setObjective(objective)
 
 
-    model.solve(plp.PULP_CBC_CMD(msg=False))
+    model.solve(solver)
 
     opt_val = objective.value()
 
