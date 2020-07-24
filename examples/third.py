@@ -103,11 +103,11 @@ if __name__ == '__main__':
     players_with_solar = r.choice(range(N), size=cant_solar, replace=False)
 
     players = {}
-    for n in range(N):
+    for n, k in enumerate(players_ids):
         has_solar = n in players_with_solar
         DFS = dfs_solar if has_solar else dfs_nosolar
-        load_ = get_data(n, real_data, W + D, DFS[0])
-        forecast_ = get_data(n, real_data, W + D, DFS[1])
+        load_ = get_data(k, real_data, W + D, DFS[0])
+        forecast_ = get_data(k, real_data, W + D, DFS[1])
 
         for i in range(0, 48 * W, 48):
             scenarios_training_load[n][i // 48, :] = load_[i: i + 48]
