@@ -47,11 +47,34 @@ if __name__ == '__main__':
 
     file_ =  Path(SIMULATION_PARAMETERS) / string
 
-    N, W, T, D, cant_bats, cant_solar, real_data, seed, cost_solar, bpt, bp1, bp2, bp3, sp, size_bat, init_bat, ram_bat, ec_bat, ed_bat, cost_bat, max_solar = parameters
+    N, W, T, D, cant_bats, cant_solar, real_data, seed, cost_solar, bpt, bp1, bp2, bp3, sp, size_bat, init_bat, ram_bat, ec_bat, ed_bat, cost_bat, max_solar, name = parameters
 
-    N, W, T, D, cant_bats, cant_solar, real_data, seed, cost_solar, bpt, bp1, bp2, bp3, sp, size_bat, init_bat, cost_bat = map(int, [N, W, T, D, cant_bats, cant_solar, real_data, seed, cost_solar, bpt, bp1, bp2, bp3, sp, size_bat, init_bat, cost_bat])
+    N = int(N)
+    W = int(W)
+    T = int(T)
+    D = int(D)
+    cant_bats = int(cant_bats)
+    cant_solar = int(cant_bats)
+    real_data = int(real_data)
+    seed = int(seed)
+    cost_solar = int(cost_solar)
+    bpt = int(bpt)
+    bp1 = float(bp1)
+    bp2 = float(bp2)
+    bp3 = float(bp3)
+    sp = float(sp)
+    size_bat = float(size_bat)
+    init_bat = float(init_bat)
+    ram_bat = float(ram_bat)
+    ec_bat = float(ec_bat)
+    ed_bat = float(ed_bat)
+    cost_bat = float(cost_bat)
+    max_solar = float(max_solar)
+    name = str(name)
 
-    ram_bat, ec_bat, ed_bat, max_solar = map(float, [ram_bat, ec_bat, ed_bat, max_solar])
+    # N, W, T, D, cant_bats, cant_solar, real_data, seed, cost_solar, bpt, bp1, bp2, bp3, sp, size_bat, init_bat, cost_bat = map(int, [N, W, T, D, cant_bats, cant_solar, real_data, seed, cost_solar, bpt, bp1, bp2, bp3, sp, size_bat, init_bat, cost_bat])
+
+    # ram_bat, ec_bat, ed_bat, max_solar = map(float, [ram_bat, ec_bat, ed_bat, max_solar])
 
 
     if file_.exists():
@@ -103,7 +126,7 @@ if __name__ == '__main__':
     players_with_solar = r.choice(range(N), size=cant_solar, replace=False)
 
     players = {}
-    for n, k in enumerate(players_ids):
+    for n, k in enumerate(player_ids):
         has_solar = n in players_with_solar
         DFS = dfs_solar if has_solar else dfs_nosolar
         load_ = get_data(k, real_data, W + D, DFS[0])
