@@ -4,7 +4,7 @@ import numpy as np
 import dill
 from pathlib import Path
 
-NAME = '*test3'
+NAME = '*test4'
 
 pth = Path('~/Simulations/coop_extension')
 
@@ -24,11 +24,11 @@ NN = tuple(range(40))
 for i, dt in enumerate(data):
     dataset[i][0] = dt[-1]['roi_coop_theo'] # Theo roi coop
     dataset[i][1] = dt[-1]['roi_coop_days'].mean() # Mean roi coop
-    dataset[i][2] = np.abs(100 * ((dataset[i, 0] / dataset[i , 1]) - 1))
+    dataset[i][2] = 100 * ((dataset[i, 0] / dataset[i , 1]) - 1)
 
     dataset[i][3] = dt[-1]['roi_hardware_theo'] # Theo roi hard
     dataset[i][4] = dt[-1]['roi_hardware_days'].mean() # Mean roi hard
-    dataset[i][5] = np.abs(100 * ((dataset[i, 3] / dataset[i , 4]) - 1))
+    dataset[i][5] = 100 * ((dataset[i, 3] / dataset[i , 4]) - 1)
 
     dataset[i][6] = (dt[-1]['roi_coop_days'] / dt[-1][NN]['cost_iterated_investment']).mean() * 100
 
@@ -36,14 +36,15 @@ for i, dt in enumerate(data):
 cnames = [
         'ROI Coop T',
         'ROI Coop E',
-        '%ROI Coop Decrease',
+        '%ROI Coop Change',
         'ROI Hrdw T',
         'ROI Hrdw E',
-        '%ROI Hrdw Decrease',
+        '%ROI Hrdw Change',
         '%ROI coop of total cost E',
 ]
 
 
 df = pd.DataFrame(dataset, columns=cnames)
-with open('table.html', 'w') as fh: fh.write(df.round(3).to_html())
+with open('table_{}.html'.format(NAME[1:]), 'w') as fh:
+    fh.write(df.round(3).to_html())
 

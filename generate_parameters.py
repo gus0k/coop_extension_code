@@ -1,7 +1,7 @@
 N = 40
-W = 40
+W = 50
 T = 48
-D = 20
+D = 50
 cant_bats = 0
 cant_solar = 0
 real_data = 10
@@ -19,10 +19,10 @@ ec_bat = 0.95
 ed_bat = 0.95
 cost_bat = 170
 max_solar = -0.75
-name = 'test3'
+name = 'test4'
 
 SEEDS = [11, 22, 33, 44, 55, 66, 77, 88]
-STARTING = [10, 15, 20, 25, 30, 35]
+STARTING = [10, 30, 50, 70, 80, 90]
 
 for seed in SEEDS:
     for real_data in STARTING:
