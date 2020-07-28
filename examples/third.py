@@ -182,7 +182,7 @@ if __name__ == '__main__':
             battery_info,
             cost_solar,
             probabilities,
-            integer=True,
+            integer=False,
             )
 
     elapsed = time.perf_counter() - start

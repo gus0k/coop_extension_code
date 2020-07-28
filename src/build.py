@@ -272,13 +272,15 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
                      rhs=batfix,
                      name="batfix")
 
-        for k in cons_fix_bat: model.addConstraint(cons_fix_bat)
+        model.addConstraint(cons_fix_bat)
 
         ### Contributions
-        if proportions_core is not None:
-            cont = proportions_core / proportions_core.sum() * batfix
-        else:
+        if proportions_core is None:
             cont = np.ones(N) / N * batfix
+        elif np.allclose(proportions_core, 0):
+            cont = np.zeros(N)
+        else: 
+            cont = proportions_core / proportions_core.sum() * batfix
         contributions[cons_fix_bat.name] = cont
 
     ## Fixing PV
@@ -289,14 +291,24 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
                      rhs=pvfix,
                      name="pvfix")
 
-        for k in cons_fix_pv: model.addConstraint(cons_fix_pv)
+        model.addConstraint(cons_fix_pv)
 
         ### Contributions
-        if proportions_core is not None:
-            cont = proportions_core / proportions_core.sum() * pvfix
-        else:
+
+
+        if proportions_core is None:
             cont = np.ones(N) / N * pvfix
+        elif np.allclose(proportions_core, 0):
+            cont = np.zeros(N)
+        else: 
+            cont = proportions_core / proportions_core.sum() * pvfix
         contributions[cons_fix_pv.name] = cont
+
+        # if proportions_core is not None:
+        #     cont = proportions_core / proportions_core.sum() * pvfix
+        # else:
+        #     cont = np.ones(N) / N * pvfix
+        # contributions[cons_fix_pv.name] = cont
 
 
     #######
@@ -364,9 +376,7 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
 
     objective = plp.lpSum(
          - batinfo['cost'] * batsize - pvinfo['cost'] * pvsize
-        + plp.lpSum( -zp_vars[(w, t)] * buying_price[t] * prob[w] + zn_vars[(w, t)] *
-        selling_price[t] * prob[w]
-        for t in set_T for w in set_W)
+        + plp.lpSum( -zp_vars[(w, t)] * buying_price[t] * prob[w] + zn_vars[(w, t)] * selling_price[t] * prob[w] for t in set_T for w in set_W)
         )
 
     model.sense = plp.LpMaximize

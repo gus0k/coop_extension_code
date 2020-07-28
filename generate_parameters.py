@@ -1,12 +1,12 @@
 N = 40
-W = 50
+W = 40
 T = 48
-D = 50
+D = 20
 cant_bats = 0
 cant_solar = 0
 real_data = 10
 seed = 1234
-cost_solar = 80
+cost_solar = 70
 bpt = 2
 bp1 = 20
 bp2 = 15
@@ -17,11 +17,11 @@ init_bat = 0
 ram_bat = 2.5
 ec_bat = 0.95
 ed_bat = 0.95
-cost_bat = 170
+cost_bat = 120
 max_solar = -0.75
-name = 'test4'
+name = 'test8'
 
-SEEDS = [11, 22, 33, 44, 55, 66, 77, 88]
+SEEDS = [11, 22, 33, 44, 55, 66, 77, 88, 99]
 STARTING = [10, 30, 50, 70, 80, 90]
 
 for seed in SEEDS:

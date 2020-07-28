@@ -165,6 +165,42 @@ def solve_one_game(N, T, D, W,
         optimal_pv = investment[1]['pvsizeXX'].varValue
 
         core_investment = extract_core(len(S), investment)
+        assert np.allclose(core_investment.sum(), cost_investment)
+
+        players = []
+        for n in S:
+            pl_ = Player(x = scenarios_training_load[n],
+                        sm = player_info[n].get('sm'),
+                        s0 = player_info[n].get('s0'),
+                        ram = player_info[n].get('ram'),
+                        ec = player_info[n].get('ec'),
+                        ed = player_info[n].get('ed'),
+                        )
+            players.append(pl_)
+
+        ### Payment for batteries
+        bi = deepcopy(battery_info)
+        bi['cost'] = 0
+        pi = deepcopy(pv_info)
+        pi['cost'] = 0
+        investment_fixed = solve_centralized(
+                players,
+                buying_price,
+                selling_price,
+                bi,
+                pi,
+                probabilities,
+                batfix = optimal_battery,
+                pvfix = optimal_pv,
+                proportions_core = core_investment,
+                integer=False,
+        )
+        cost_fixed =  - investment_fixed[0].objective.value()
+        core_investment_fixed = extract_core(len(S), investment_fixed)
+        battery_core = core_investment - core_investment_fixed
+        hardware_cost = optimal_pv * pv_info['cost'] + battery_info['cost'] * optimal_battery
+        assert np.allclose(battery_core.sum(), hardware_cost)
+        assert np.allclose(cost_fixed, core_investment_fixed.sum())
 
         ### Analysis iterated
 
@@ -234,29 +270,33 @@ def solve_one_game(N, T, D, W,
                 'cost': cost_solar,
                 'data': real_solar[d, :].copy().reshape(1, -1),
             }
-            battery_info['init'] = 0
 
             ### Analysis no investment
 
+            bi = deepcopy(battery_info)
+            bi['cost'] = 0
+            bi['init'] = 0
+            pi = deepcopy(pv_info)
+            pi['cost'] = 0
             perfect_data = solve_centralized(
                     players,
                     buying_price,
                     selling_price,
-                    battery_info,
-                    pv_info,
+                    bi,
+                    pi,
                     np.ones(1),
                     optimal_battery,
                     optimal_pv,
-                    core_investment,
-                    integer=integer,
+                    proportions_core = None,
+                    integer=False,
             )
 
-            cost_perfect_data = - perfect_data[0].objective.value()
+            cost_perfect_data = - perfect_data[0].objective.value() + hardware_cost
             cost_perfect_data_investment[d] = cost_perfect_data
 
-            core_perfect_data = extract_core(len(S), perfect_data)
-            # TODO: this does not work
+            core_perfect_data = extract_core(len(S), perfect_data) + battery_core
             cores_perfect_data[d, :] = core_perfect_data
+            assert np.allclose(core_perfect_data.sum(), cost_perfect_data)
 
 
 

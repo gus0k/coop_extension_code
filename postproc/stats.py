@@ -4,7 +4,7 @@ import numpy as np
 import dill
 from pathlib import Path
 
-NAME = '*test4'
+NAME = '*test6'
 
 pth = Path('~/Simulations/coop_extension')
 
@@ -18,8 +18,12 @@ for fl in flist:
         data.append(d)
 D = len(data)
 
+N = len([
+    x for x in data[0][-1].keys() if isinstance(x, tuple)
+    ]) - 1
+
 dataset = np.zeros((D, 7))
-NN = tuple(range(40))
+NN = tuple(range(N))
 
 for i, dt in enumerate(data):
     dataset[i][0] = dt[-1]['roi_coop_theo'] # Theo roi coop
@@ -32,6 +36,14 @@ for i, dt in enumerate(data):
 
     dataset[i][6] = (dt[-1]['roi_coop_days'] / dt[-1][NN]['cost_iterated_investment']).mean() * 100
 
+changes = np.zeros((D, N))
+for i, dt in enumerate(data):
+    coop = dt[-1]['final_core_payoffs'].sum(axis=0)
+    single = np.array([dt[-1][(j,)]['cost_iterated_investment'].sum() for j in range(N)])
+    change = 100 * ((single - coop) / coop)
+    changes[i, :] = change
+
+chg = pd.DataFrame(changes).round(1)
 
 cnames = [
         'ROI Coop T',
@@ -48,3 +60,5 @@ df = pd.DataFrame(dataset, columns=cnames)
 with open('table_{}.html'.format(NAME[1:]), 'w') as fh:
     fh.write(df.round(3).to_html())
 
+with open('table_changes_{}.html'.format(NAME[1:]), 'w') as fh:
+    fh.write(chg.to_html())
