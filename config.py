@@ -14,7 +14,9 @@ if hostname == 'guso-inspiron':
     CPLEX_PATH = None 
 elif hostname == 'lame23':
     DATAPATH = home + '/coop_extension_code/coop_extension_code/load_profiles/'
-    CPLEX_PATH = '/home/infres/dkiedanski/Cplex/cplex/bin/x86-64_linux/cplex'
+#    CPLEX_PATH = '/home/infres/dkiedanski/Cplex/cplex/bin/x86-64_linux/cplex'
+#    CPLEX_PATH=None
+    CPLEX_PATH = '/home/infres/dkiedanski/cplex2/cplex/bin/x86-64_linux/cplex'
 
 DATA = DATAPATH + 'home_data_2012-13.csv'
 DATA_SOLAR = DATAPATH + 'home_data_2012-13_rand_03.csv'

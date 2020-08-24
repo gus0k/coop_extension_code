@@ -165,7 +165,24 @@ def solve_one_game(N, T, D, W,
         optimal_pv = investment[1]['pvsizeXX'].varValue
 
         core_investment = extract_core(len(S), investment)
-        assert np.allclose(core_investment.sum(), cost_investment)
+        #assert np.allclose(core_investment.sum(), cost_investment, atol=1e-3)
+
+        investment_cont = solve_centralized(
+                players,
+                buying_price,
+                selling_price,
+                battery_info,
+                pv_info,
+                probabilities,
+                None,
+                None,
+                integer=False,
+        )
+        optimal_battery_cont = investment_cont[1]['batsizeXX'].varValue
+        optimal_pv_cont = investment_cont[1]['pvsizeXX'].varValue
+        cost_investment_cont = - investment_cont[0].objective.value()
+        core_investment_cont = extract_core(len(S), investment_cont)
+        core_approx = core_investment_cont * (cost_investment / cost_investment_cont)
 
         players = []
         for n in S:
@@ -192,15 +209,16 @@ def solve_one_game(N, T, D, W,
                 probabilities,
                 batfix = optimal_battery,
                 pvfix = optimal_pv,
-                proportions_core = core_investment,
+                #proportions_core = core_investment,
+                proportions_core = core_approx,
                 integer=False,
         )
         cost_fixed =  - investment_fixed[0].objective.value()
         core_investment_fixed = extract_core(len(S), investment_fixed)
-        battery_core = core_investment - core_investment_fixed
+        battery_core = core_approx - core_investment_fixed
         hardware_cost = optimal_pv * pv_info['cost'] + battery_info['cost'] * optimal_battery
-        assert np.allclose(battery_core.sum(), hardware_cost)
-        assert np.allclose(cost_fixed, core_investment_fixed.sum())
+        assert np.allclose(battery_core.sum(), hardware_cost, atol=1e-3)
+        assert np.allclose(cost_fixed, core_investment_fixed.sum(), atol=1e-3)
 
         ### Analysis iterated
 
@@ -296,18 +314,24 @@ def solve_one_game(N, T, D, W,
 
             core_perfect_data = extract_core(len(S), perfect_data) + battery_core
             cores_perfect_data[d, :] = core_perfect_data
-            assert np.allclose(core_perfect_data.sum(), cost_perfect_data)
+            # print(core_perfect_data.sum(), cost_perfect_data)
+            assert np.allclose(core_perfect_data.sum(), cost_perfect_data, atol=1e-3)
 
 
 
         result = {
         'cost_no_investment': cost_no_investment,
         'cost_investment': cost_investment,
+        'cost_investment_cont': cost_investment_cont,
         'optimal_battery': optimal_battery,
         'optimal_pv': optimal_pv,
+        'optimal_battery_cont': optimal_battery_cont,
+        'optimal_pv_cont': optimal_pv_cont,
         'cost_iterated_investment': cost_iterated_investment,
         'cost_iterated_no_investment': cost_iterated_no_investment,
         'core_investment': core_investment,
+        'core_investment_cont': core_investment_cont,
+        'core_approx': core_approx,
         'cores_perfect_data': cores_perfect_data,
         'cost_perfect_data_investment': cost_perfect_data_investment,
         }

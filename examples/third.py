@@ -88,7 +88,8 @@ if __name__ == '__main__':
 
     if bpt == 2:
         buying_price = np.ones(T) * bp1
-        buying_price[: T // 2] = bp2
+        buying_price[: 14] = bp2
+        buying_price[-2:] = bp2
 
     selling_price = np.ones(T) * sp
 
@@ -182,7 +183,7 @@ if __name__ == '__main__':
             battery_info,
             cost_solar,
             probabilities,
-            integer=False,
+            integer=True,
             )
 
     elapsed = time.perf_counter() - start
