@@ -276,10 +276,13 @@ def solve_centralized(player_list, buying_price, selling_price, batinfo, pvinfo,
 
         ### Contributions
         if proportions_core is None:
+            print('contrib core none')
             cont = np.ones(N) / N * batfix
         elif np.allclose(proportions_core, 0):
+            print('contrib core 0')
             cont = np.zeros(N)
         else: 
+            print('proper contrib')
             cont = proportions_core / proportions_core.sum() * batfix
         contributions[cons_fix_bat.name] = cont
 

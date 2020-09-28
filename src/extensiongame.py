@@ -1,6 +1,5 @@
 from copy import deepcopy
 from pathlib import Path
-from sim.params_alg import params
 from src.game import *
 from src.newdist import main_dist
 from src.player import Player
@@ -334,6 +333,8 @@ def solve_one_game(N, T, D, W,
         'core_approx': core_approx,
         'cores_perfect_data': cores_perfect_data,
         'cost_perfect_data_investment': cost_perfect_data_investment,
+        'core_investment_fixed': core_investment_fixed,
+        'battery_core': battery_core,
         }
 
         results[tuple(S)] = result
