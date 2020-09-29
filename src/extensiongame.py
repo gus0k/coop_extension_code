@@ -1,6 +1,5 @@
 from copy import deepcopy
 from pathlib import Path
-from sim.params_alg import params
 from src.game import *
 from src.newdist import main_dist
 from src.player import Player

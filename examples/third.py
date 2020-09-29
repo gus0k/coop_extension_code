@@ -9,7 +9,6 @@ import numpy as np
 from src.newdist import main_dist
 from src.game import *
 from pathlib import Path
-from sim.params_alg import params
 from src.player import Player
 from copy import deepcopy
 from src.extensiongame import *

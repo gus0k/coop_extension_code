@@ -17,6 +17,9 @@ elif hostname == 'lame23':
 #    CPLEX_PATH = '/home/infres/dkiedanski/Cplex/cplex/bin/x86-64_linux/cplex'
 #    CPLEX_PATH=None
     CPLEX_PATH = '/home/infres/dkiedanski/cplex2/cplex/bin/x86-64_linux/cplex'
+elif hostname == 'diegoxps15':
+    DATAPATH = home + '/github/coop_extension_code/load_profiles/'
+    CPLEX_PATH = '/home/diego/cplex/cplex/bin/x86-64_linux/cplex' 
 
 DATA = DATAPATH + 'home_data_2012-13.csv'
 DATA_SOLAR = DATAPATH + 'home_data_2012-13_rand_03.csv'
